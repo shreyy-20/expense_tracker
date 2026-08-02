@@ -1,20 +1,23 @@
-version: '3.8'
-
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
     volumes:
       - ./backend/src:/app/src
       - ./backend/data:/app/data
     environment:
-      - BACKEND_ENV=development
+      - BACKEND_ENVIRONMENT=development
+      - BACKEND_LOG_LEVEL=debug
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
     volumes:
       - ./frontend/src:/app/src
     environment:

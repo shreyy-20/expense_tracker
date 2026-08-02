@@ -1,4 +1,5 @@
 """Thread-safe, atomic JSON file manager with file locking."""
+
 import json
 import os
 import tempfile
@@ -40,7 +41,7 @@ class JsonFileManager:
         with self._lock:
             try:
                 with open(self.file_path, encoding="utf-8") as f:
-                    data = json.load(f)
+                    data: dict = json.load(f)
                 return data
             except (json.JSONDecodeError, FileNotFoundError) as e:
                 logger.warning(f"Data file corrupted or missing, resetting: {e}")
@@ -58,10 +59,7 @@ class JsonFileManager:
         """Write to temp file then rename for atomicity."""
         self.file_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            fd, tmp_path = tempfile.mkstemp(
-                dir=str(self.file_path.parent),
-                suffix=".tmp"
-            )
+            fd, tmp_path = tempfile.mkstemp(dir=str(self.file_path.parent), suffix=".tmp")
             try:
                 with os.fdopen(fd, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, ensure_ascii=False, default=str)

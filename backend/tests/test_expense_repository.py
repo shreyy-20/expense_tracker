@@ -1,4 +1,5 @@
 """Expense repository unit tests."""
+
 import uuid
 
 import pytest
@@ -14,14 +15,15 @@ def repo(tmp_path):
     fm.ensure_file_exists()
     return ExpenseRepository(fm)
 
+
 class TestExpenseRepository:
     def test_create_and_get_all(self, repo):
         exp = Expense(
-            id=str(uuid.uuid4()),
+            expense_id=str(uuid.uuid4()),
             title="Test",
             amount=10.0,
             category="Food & Dining",
-            date="2024-07-15"
+            date="2024-07-15",
         )
         repo.create(exp)
         all_exp = repo.get_all()
@@ -31,7 +33,11 @@ class TestExpenseRepository:
     def test_get_by_id(self, repo):
         exp_id = str(uuid.uuid4())
         exp = Expense(
-            id=exp_id, title="Test", amount=10.0, category="Food & Dining", date="2024-07-15"
+            expense_id=exp_id,
+            title="Test",
+            amount=10.0,
+            category="Food & Dining",
+            date="2024-07-15",
         )
         repo.create(exp)
         fetched = repo.get_by_id(exp_id)
@@ -43,7 +49,11 @@ class TestExpenseRepository:
     def test_update(self, repo):
         exp_id = str(uuid.uuid4())
         exp = Expense(
-            id=exp_id, title="Test", amount=10.0, category="Food & Dining", date="2024-07-15"
+            expense_id=exp_id,
+            title="Test",
+            amount=10.0,
+            category="Food & Dining",
+            date="2024-07-15",
         )
         repo.create(exp)
 
@@ -56,7 +66,11 @@ class TestExpenseRepository:
     def test_delete(self, repo):
         exp_id = str(uuid.uuid4())
         exp = Expense(
-            id=exp_id, title="Test", amount=10.0, category="Food & Dining", date="2024-07-15"
+            expense_id=exp_id,
+            title="Test",
+            amount=10.0,
+            category="Food & Dining",
+            date="2024-07-15",
         )
         repo.create(exp)
         assert repo.delete(exp_id) is True
@@ -64,8 +78,20 @@ class TestExpenseRepository:
         assert repo.delete("nonexistent") is False
 
     def test_filtered_by_category(self, repo):
-        exp1 = Expense(id=str(uuid.uuid4()), title="T1", amount=10.0, category="Utilities", date="2024-07-15")
-        exp2 = Expense(id=str(uuid.uuid4()), title="T2", amount=10.0, category="Food & Dining", date="2024-07-15")
+        exp1 = Expense(
+            expense_id=str(uuid.uuid4()),
+            title="T1",
+            amount=10.0,
+            category="Utilities",
+            date="2024-07-15",
+        )
+        exp2 = Expense(
+            expense_id=str(uuid.uuid4()),
+            title="T2",
+            amount=10.0,
+            category="Food & Dining",
+            date="2024-07-15",
+        )
         repo.create(exp1)
         repo.create(exp2)
 
@@ -74,8 +100,20 @@ class TestExpenseRepository:
         assert result[0]["title"] == "T1"
 
     def test_sorted_by_amount(self, repo):
-        exp1 = Expense(id=str(uuid.uuid4()), title="T1", amount=50.0, category="Utilities", date="2024-07-15")
-        exp2 = Expense(id=str(uuid.uuid4()), title="T2", amount=10.0, category="Food & Dining", date="2024-07-15")
+        exp1 = Expense(
+            expense_id=str(uuid.uuid4()),
+            title="T1",
+            amount=50.0,
+            category="Utilities",
+            date="2024-07-15",
+        )
+        exp2 = Expense(
+            expense_id=str(uuid.uuid4()),
+            title="T2",
+            amount=10.0,
+            category="Food & Dining",
+            date="2024-07-15",
+        )
         repo.create(exp1)
         repo.create(exp2)
 

@@ -1,4 +1,6 @@
 """FastAPI application factory."""
+
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -18,16 +20,17 @@ from src.utils.logger import logger
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Startup
     settings = get_settings()
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
     logger.info(f"Environment: {settings.environment}")
-    fm = get_file_manager()  # This ensures the data file exists
+    get_file_manager()  # This ensures the data file exists
     logger.info(f"Data file: {settings.data_file_path}")
     yield
     # Shutdown
     logger.info("Shutting down...")
+
 
 def create_app() -> FastAPI:
     settings = get_settings()
@@ -45,7 +48,7 @@ def create_app() -> FastAPI:
     # Rate limiting
     limiter = Limiter(key_func=get_remote_address, default_limits=[settings.rate_limit])
     app.state.limiter = limiter
-    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 
     # Middleware (order matters - last added = first executed)
     app.add_middleware(SecurityHeadersMiddleware)
@@ -59,5 +62,6 @@ def create_app() -> FastAPI:
     app.include_router(api_router, prefix=API_V1_PREFIX)
 
     return app
+
 
 app = create_app()

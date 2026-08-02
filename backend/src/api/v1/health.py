@@ -1,4 +1,5 @@
 """Health and version endpoints."""
+
 import time
 
 from fastapi import APIRouter
@@ -11,8 +12,9 @@ router = APIRouter(tags=["System"])
 
 _start_time = time.time()
 
+
 @router.get("/health", summary="Health check")
-async def health_check():
+async def health_check() -> JSONResponse:
     fm = get_file_manager()
     storage_healthy = fm.is_healthy()
     settings = get_settings()
@@ -26,11 +28,12 @@ async def health_check():
             "uptime_seconds": uptime,
             "storage": "ok" if storage_healthy else "error",
             "environment": settings.environment,
-        }
+        },
     )
 
+
 @router.get("/version", summary="App version")
-async def version():
+async def version() -> dict:
     settings = get_settings()
     return {
         "name": settings.app_name,

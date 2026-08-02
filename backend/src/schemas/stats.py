@@ -1,9 +1,11 @@
 """Statistics response schemas."""
+
 from pydantic import BaseModel
 
 
 class SummaryStats(BaseModel):
     """Overall expense summary."""
+
     total_amount: float
     total_count: int
     average_amount: float
@@ -12,16 +14,20 @@ class SummaryStats(BaseModel):
     top_category: str | None = None
     currency: str = "USD"
 
+
 class CategoryStat(BaseModel):
     """Per-category statistics."""
+
     category: str
     total: float
     count: int
     percentage: float
     average: float
 
+
 class MonthlyStat(BaseModel):
     """Per-month statistics for charting."""
+
     month: str  # YYYY-MM format
     total: float
     count: int

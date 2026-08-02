@@ -1,4 +1,5 @@
 """Shared test fixtures."""
+
 import os
 from unittest.mock import patch
 
@@ -9,12 +10,14 @@ from httpx import ASGITransport, AsyncClient
 os.environ["BACKEND_ENVIRONMENT"] = "testing"
 os.environ["BACKEND_LOG_LEVEL"] = "warning"
 
+
 @pytest.fixture
 def temp_data_dir(tmp_path):
     """Create a temporary data directory."""
     data_dir = tmp_path / "data"
     data_dir.mkdir()
     return data_dir
+
 
 @pytest.fixture
 def app(temp_data_dir):
@@ -31,19 +34,19 @@ def app(temp_data_dir):
         get_settings.cache_clear()
         get_file_manager.cache_clear()
         from src.main import create_app
+
         test_app = create_app()
         yield test_app
         get_settings.cache_clear()
         get_file_manager.cache_clear()
 
+
 @pytest.fixture
 async def client(app):
     """Async HTTP client for testing."""
-    async with AsyncClient(
-        transport=ASGITransport(app=app),
-        base_url="http://test"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
+
 
 @pytest.fixture
 def sample_expense():
@@ -52,8 +55,9 @@ def sample_expense():
         "title": "Morning Coffee",
         "amount": 4.50,
         "category": "Food & Dining",
-        "date": "2024-07-15"
+        "date": "2024-07-15",
     }
+
 
 @pytest.fixture
 def sample_expenses():

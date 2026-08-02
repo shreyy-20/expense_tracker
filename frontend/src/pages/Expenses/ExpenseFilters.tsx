@@ -3,16 +3,17 @@ import { SearchInput } from '../../components/ui/SearchInput';
 import { Select } from '../../components/ui/Select';
 import { useCategories } from '../../hooks/useExpenses';
 import { DEFAULT_CATEGORIES } from '../../utils/constants';
+import { ExpenseQueryParams } from '../../types/expense';
 
 interface ExpenseFiltersProps {
   search: string;
   onSearchChange: (val: string) => void;
   category: string;
   onCategoryChange: (val: string) => void;
-  sortBy: string;
-  onSortByChange: (val: string) => void;
-  sortOrder: string;
-  onSortOrderChange: (val: string) => void;
+  sortBy: ExpenseQueryParams['sort_by'];
+  onSortByChange: (val: ExpenseQueryParams['sort_by']) => void;
+  sortOrder: ExpenseQueryParams['sort_order'];
+  onSortOrderChange: (val: ExpenseQueryParams['sort_order']) => void;
 }
 
 export const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({
@@ -54,13 +55,13 @@ export const ExpenseFilters: React.FC<ExpenseFiltersProps> = ({
         />
         <Select
           value={sortBy}
-          onChange={(e) => onSortByChange(e.target.value)}
+          onChange={(e) => onSortByChange(e.target.value as ExpenseQueryParams['sort_by'])}
           options={sortOptions}
           className="w-40"
         />
         <Select
           value={sortOrder}
-          onChange={(e) => onSortOrderChange(e.target.value)}
+          onChange={(e) => onSortOrderChange(e.target.value as ExpenseQueryParams['sort_order'])}
           options={[
             { value: 'desc', label: 'Descending' },
             { value: 'asc', label: 'Ascending' },

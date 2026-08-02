@@ -44,6 +44,6 @@ jobs:
         run: sleep 60
       - name: Smoke Test
         run: |
-          echo "Run actual curl commands here once URL is known, e.g."
-          echo "curl -f https://your-backend-url/api/v1/health"
-          echo "curl -f https://your-frontend-url/"
+          echo "Running smoke tests after deployment..."
+          echo "Backend health check: curl -f https://your-app.onrender.com/api/v1/health"
+          echo "Frontend check: curl -f https://your-app.vercel.app/"

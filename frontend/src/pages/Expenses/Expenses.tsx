@@ -12,15 +12,27 @@ import {
   useDeleteExpense,
   useBulkDeleteExpenses,
 } from '../../hooks/useExpenses';
-import { Expense, ExpenseCreateInput } from '../../types/expense';
+import { Expense, ExpenseCreateInput, ExpenseQueryParams } from '../../types/expense';
 import { useDebounce } from '../../hooks/useDebounce';
 
 export const Expenses: React.FC = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
-  const [sortBy, setSortBy] = useState('date');
-  const [sortOrder, setSortOrder] = useState('desc');
+  const [sortBy, setSortBy] = useState<NonNullable<ExpenseQueryParams['sort_by']>>('date');
+  const [sortOrder, setSortOrder] = useState<NonNullable<ExpenseQueryParams['sort_order']>>('desc');
+
+  const handleSortByChange = (value: ExpenseQueryParams['sort_by']) => {
+    if (value) {
+      setSortBy(value);
+    }
+  };
+
+  const handleSortOrderChange = (value: ExpenseQueryParams['sort_order']) => {
+    if (value) {
+      setSortOrder(value);
+    }
+  };
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -35,8 +47,8 @@ export const Expenses: React.FC = () => {
     per_page: 15,
     search: debouncedSearch,
     category: category || undefined,
-    sort_by: sortBy as any,
-    sort_order: sortOrder as any,
+    sort_by: sortBy,
+    sort_order: sortOrder,
   });
 
   const createMutation = useCreateExpense();
@@ -98,9 +110,9 @@ export const Expenses: React.FC = () => {
         category={category}
         onCategoryChange={setCategory}
         sortBy={sortBy}
-        onSortByChange={setSortBy}
+        onSortByChange={handleSortByChange}
         sortOrder={sortOrder}
-        onSortOrderChange={setSortOrder}
+        onSortOrderChange={handleSortOrderChange}
       />
 
       <BulkActions

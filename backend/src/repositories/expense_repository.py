@@ -10,7 +10,7 @@ class ExpenseRepository:
     def get_all(self) -> list[dict]:
         """Return all expenses as dicts."""
         data = self._fm.read_data()
-        return data.get("expenses", [])
+        return list(data.get("expenses", []) or [])
 
     def get_by_id(self, expense_id: str) -> dict | None:
         """Return expense dict by ID, or None."""
@@ -78,39 +78,47 @@ class ExpenseRepository:
     ) -> list[dict]:
         """Return filtered and sorted expenses."""
         expenses = self.get_all()
-        filtered = []
+        filtered: list[dict] = []
 
         for e in expenses:
             if category and e.get("category") != category:
                 continue
-            if search and search.lower() not in e.get("title", "").lower():
+            if search and search.lower() not in str(e.get("title", "")).lower():
                 continue
-            if date_from and e.get("date") < date_from:
+            e_date = e.get("date")
+            if date_from and e_date is not None and str(e_date) < date_from:
                 continue
-            if date_to and e.get("date") > date_to:
+            if date_to and e_date is not None and str(e_date) > date_to:
                 continue
-            if amount_min is not None and e.get("amount", 0.0) < amount_min:
+            if amount_min is not None and float(e.get("amount", 0.0)) < amount_min:
                 continue
-            if amount_max is not None and e.get("amount", 0.0) > amount_max:
+            if amount_max is not None and float(e.get("amount", 0.0)) > amount_max:
                 continue
             filtered.append(e)
 
         sort_field = sort_by if sort_by in ALLOWED_SORT_FIELDS else DEFAULT_SORT_FIELD
-        reverse = (sort_order == "desc")
+        reverse = sort_order == "desc"
 
-        # Sort handle numeric vs string gracefully if needed, but dict items are fine
-        filtered.sort(key=lambda x: x.get(sort_field), reverse=reverse)
+        def _sort_key(item: dict) -> tuple:
+            value = item.get(sort_field)
+            if isinstance(value, (int, float)):
+                return (0, float(value))
+            return (1, str(value or ""))
+
+        # Sort handle numeric vs string gracefully
+        filtered.sort(key=_sort_key, reverse=reverse)
         return filtered
 
     def get_categories(self) -> list[str]:
         """Return current category list."""
         data = self._fm.read_data()
-        return data.get("categories", [])
+        cats: list[str] = data.get("categories", []) or []
+        return cats
 
     def add_category(self, category: str) -> list[str]:
         """Add a custom category. Return updated list."""
         data = self._fm.read_data()
-        categories = data.get("categories", [])
+        categories: list[str] = data.get("categories", []) or []
         if category not in categories:
             categories.append(category)
             data["categories"] = categories
@@ -120,7 +128,7 @@ class ExpenseRepository:
     def remove_category(self, category: str) -> list[str]:
         """Remove a category. Return updated list."""
         data = self._fm.read_data()
-        categories = data.get("categories", [])
+        categories: list[str] = data.get("categories", []) or []
         if category in categories:
             categories.remove(category)
             data["categories"] = categories
@@ -130,12 +138,13 @@ class ExpenseRepository:
     def get_settings(self) -> dict:
         """Return current settings dict."""
         data = self._fm.read_data()
-        return data.get("settings", {})
+        settings: dict = data.get("settings", {}) or {}
+        return settings
 
     def update_settings(self, updates: dict) -> dict:
         """Update settings. Return updated settings dict."""
         data = self._fm.read_data()
-        settings = data.get("settings", {})
+        settings: dict = data.get("settings", {}) or {}
         settings.update(updates)
         data["settings"] = settings
         self._fm.write_data(data)

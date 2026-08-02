@@ -1,7 +1,9 @@
 """Statistics API endpoint tests."""
+
 import pytest
 
 pytestmark = pytest.mark.asyncio
+
 
 class TestSummaryStats:
     async def test_summary_empty(self, client):
@@ -20,6 +22,7 @@ class TestSummaryStats:
         expected_total = sum(e["amount"] for e in sample_expenses)
         assert abs(data["total_amount"] - expected_total) < 0.01
 
+
 class TestMonthlyStats:
     async def test_monthly_empty(self, client):
         response = await client.get("/api/v1/stats/monthly")
@@ -34,6 +37,7 @@ class TestMonthlyStats:
         assert "month" in data[0]
         assert "total" in data[0]
         assert "count" in data[0]
+
 
 class TestCategoryStats:
     async def test_category_empty(self, client):
