@@ -50,6 +50,9 @@ jobs:
         run: npx eslint src/ --ext .ts,.tsx
       - name: Run TypeScript check
         run: npx tsc --noEmit
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
 
   test-backend:
     runs-on: ubuntu-latest

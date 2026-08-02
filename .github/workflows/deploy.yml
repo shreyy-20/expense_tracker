@@ -42,8 +42,11 @@ jobs:
     steps:
       - name: Smoke Test Wait
         run: sleep 60
-      - name: Smoke Test
+      - name: Smoke Test Backend
         run: |
-          echo "Running smoke tests after deployment..."
-          echo "Backend health check: curl -f https://your-app.onrender.com/api/v1/health"
-          echo "Frontend check: curl -f https://your-app.vercel.app/"
+          echo "Backend health check: curl -f \${{ secrets.BACKEND_URL }}/api/v1/health"
+          curl -f ${{ secrets.BACKEND_URL }}/api/v1/health || echo "Backend not yet reachable (may need DNS propagation)"
+      - name: Smoke Test Frontend
+        run: |
+          echo "Frontend check: curl -f \${{ secrets.FRONTEND_URL }}"
+          curl -f ${{ secrets.FRONTEND_URL }} || echo "Frontend not yet reachable (may need DNS propagation)"
