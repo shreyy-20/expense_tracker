@@ -1,16 +1,15 @@
 """Global exception handler middleware."""
 from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-
-from src.core.exceptions import AppException
+from fastapi.exceptions import RequestValidationError
+from src.core.exceptions import AppError
 from src.utils.logger import logger
 
 
 def setup_error_handlers(app: FastAPI) -> None:
 
-    @app.exception_handler(AppException)
-    async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
+    @app.exception_handler(AppError)
+    async def app_exception_handler(request: Request, exc: AppError) -> JSONResponse:
         request_id = getattr(request.state, "request_id", None)
         error_dict = {
             "code": exc.error_code,
@@ -21,7 +20,7 @@ def setup_error_handlers(app: FastAPI) -> None:
 
         content = {
             "status": "error",
-            "error": error_dict
+            "error": error_dict,
         }
         if request_id:
             content["request_id"] = request_id
@@ -37,7 +36,7 @@ def setup_error_handlers(app: FastAPI) -> None:
             details.append({
                 "field": field,
                 "message": error.get("msg"),
-                "type": error.get("type")
+                "type": error.get("type"),
             })
 
         content = {
@@ -45,8 +44,8 @@ def setup_error_handlers(app: FastAPI) -> None:
             "error": {
                 "code": "VALIDATION_ERROR",
                 "message": "Validation failed",
-                "details": details
-            }
+                "details": details,
+            },
         }
         if request_id:
             content["request_id"] = request_id
@@ -62,8 +61,8 @@ def setup_error_handlers(app: FastAPI) -> None:
             "status": "error",
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
-                "message": "An unexpected error occurred."
-            }
+                "message": "An unexpected error occurred.",
+            },
         }
         if request_id:
             content["request_id"] = request_id

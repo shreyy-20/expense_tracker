@@ -2,14 +2,11 @@
 import json
 import os
 import tempfile
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
-
 from filelock import FileLock
-
 from src.core.constants import DEFAULT_CATEGORIES, DEFAULT_CURRENCY, STORAGE_VERSION
 from src.utils.logger import logger
-
 
 class JsonFileManager:
     def __init__(self, file_path: Path):
@@ -20,7 +17,7 @@ class JsonFileManager:
         """Return the default data structure for a new file."""
         return {
             "version": STORAGE_VERSION,
-            "last_modified": datetime.now(UTC).isoformat(),
+            "last_modified": datetime.now(timezone.utc).isoformat(),
             "settings": {
                 "currency": DEFAULT_CURRENCY,
             },
@@ -39,7 +36,7 @@ class JsonFileManager:
         """Read and return the full JSON data structure. Thread-safe."""
         with self._lock:
             try:
-                with open(self.file_path, encoding="utf-8") as f:
+                with open(self.file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 return data
             except (json.JSONDecodeError, FileNotFoundError) as e:
@@ -51,7 +48,7 @@ class JsonFileManager:
     def write_data(self, data: dict) -> None:
         """Atomically write data to JSON file. Thread-safe."""
         with self._lock:
-            data["last_modified"] = datetime.now(UTC).isoformat()
+            data["last_modified"] = datetime.now(timezone.utc).isoformat()
             self._write_atomic(data)
 
     def _write_atomic(self, data: dict) -> None:
@@ -60,7 +57,7 @@ class JsonFileManager:
         try:
             fd, tmp_path = tempfile.mkstemp(
                 dir=str(self.file_path.parent),
-                suffix=".tmp"
+                suffix=".tmp",
             )
             try:
                 with os.fdopen(fd, "w", encoding="utf-8") as f:

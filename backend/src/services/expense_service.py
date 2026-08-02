@@ -1,17 +1,11 @@
 import math
-
-from src.core.constants import ALLOWED_SORT_FIELDS, MAX_CATEGORIES, MAX_TITLE_LENGTH
-from src.core.exceptions import DuplicateException, NotFoundException, ValidationException
 from src.models.expense import Expense
 from src.repositories.expense_repository import ExpenseRepository
+from src.schemas.expense import ExpenseCreate, ExpenseUpdate, ExpensePartialUpdate, ExpenseQueryParams, ExpenseResponse
 from src.schemas.common import PaginationMeta
-from src.schemas.expense import (
-    ExpenseCreate,
-    ExpensePartialUpdate,
-    ExpenseQueryParams,
-    ExpenseUpdate,
-)
-
+from src.core.exceptions import NotFoundException, ValidationException, DuplicateException
+from src.core.constants import ALLOWED_SORT_FIELDS, MAX_CATEGORIES, MAX_TITLE_LENGTH
+from src.utils.logger import logger
 
 class ExpenseService:
     def __init__(self, repository: ExpenseRepository):
@@ -29,7 +23,7 @@ class ExpenseService:
             amount_min=params.amount_min,
             amount_max=params.amount_max,
             sort_by=sort_by,
-            sort_order=params.sort_order
+            sort_order=params.sort_order,
         )
 
         total_items = len(filtered)
@@ -48,7 +42,7 @@ class ExpenseService:
             total_items=total_items,
             total_pages=total_pages,
             has_next=page < total_pages,
-            has_prev=page > 1
+            has_prev=page > 1,
         )
 
         return page_items, pagination_meta
@@ -70,7 +64,7 @@ class ExpenseService:
             title=data.title,
             amount=data.amount,
             category=data.category,
-            date=data.date
+            date=data.date,
         )
 
         return self._repo.create(expense)
@@ -132,7 +126,7 @@ class ExpenseService:
                     title=item.get("title"),
                     amount=item.get("amount"),
                     category=item.get("category"),
-                    date=item.get("date")
+                    date=item.get("date"),
                 )
                 self._repo.create(expense)
                 imported += 1
