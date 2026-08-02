@@ -1,6 +1,7 @@
 """Statistics response schemas."""
 from pydantic import BaseModel
 
+
 class SummaryStats(BaseModel):
     """Overall expense summary."""
     total_amount: float

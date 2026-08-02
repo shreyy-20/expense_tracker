@@ -1,6 +1,8 @@
 """Common schemas used across the application."""
 from pydantic import BaseModel, Field
+
 from src.core.constants import DEFAULT_PAGE, DEFAULT_PER_PAGE, MAX_PER_PAGE
+
 
 class PaginationParams(BaseModel):
     page: int = Field(default=DEFAULT_PAGE, ge=1, description="Page number")

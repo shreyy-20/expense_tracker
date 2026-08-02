@@ -64,7 +64,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 pip install -r requirements.txt
 make seed  # Seed the database with sample data
-uvicorn main:app --reload
+uvicorn src.main:app --reload
 ```
 
 #### Frontend Setup
@@ -79,7 +79,7 @@ npm run dev
 ```
 smart-expense-tracker/
 ├── backend/          # FastAPI application
-│   ├── app/          # Application code (routers, models, services)
+│   ├── src/          # Application code (routers, models, services)
 │   ├── tests/        # Pytest test suite
 │   ├── data/         # JSON persistence layer
 │   └── requirements.txt
@@ -119,7 +119,7 @@ For a deep dive into the architecture decisions, read [docs/Architecture.md](doc
 ### Backend Tests
 ```bash
 cd backend
-pytest --cov=app tests/
+pytest --cov=src tests/
 ```
 
 ### Frontend Tests

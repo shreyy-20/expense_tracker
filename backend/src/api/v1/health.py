@@ -1,7 +1,9 @@
 """Health and version endpoints."""
 import time
+
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+
 from src.core.config import get_settings
 from src.dependencies import get_file_manager
 

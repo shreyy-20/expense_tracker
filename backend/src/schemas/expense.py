@@ -1,7 +1,10 @@
 """Expense request and response schemas."""
 from datetime import date
+
 from pydantic import BaseModel, Field, field_validator
-from src.core.constants import MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_AMOUNT, MAX_AMOUNT
+
+from src.core.constants import MAX_AMOUNT, MAX_TITLE_LENGTH, MIN_TITLE_LENGTH
+
 
 class ExpenseCreate(BaseModel):
     """Schema for creating a new expense."""
@@ -9,7 +12,7 @@ class ExpenseCreate(BaseModel):
     amount: float = Field(..., gt=0, le=MAX_AMOUNT, description="Expense amount")
     category: str = Field(..., min_length=1, description="Expense category")
     date: str = Field(..., description="Expense date in YYYY-MM-DD format")
-    
+
     @field_validator("title")
     @classmethod
     def validate_title(cls, v: str) -> str:
@@ -17,12 +20,12 @@ class ExpenseCreate(BaseModel):
         if len(v) < MIN_TITLE_LENGTH:
             raise ValueError("Title cannot be empty or whitespace only")
         return v
-    
+
     @field_validator("amount")
     @classmethod
     def validate_amount(cls, v: float) -> float:
         return round(v, 2)
-    
+
     @field_validator("date")
     @classmethod
     def validate_date(cls, v: str) -> str:
@@ -42,7 +45,7 @@ class ExpensePartialUpdate(BaseModel):
     amount: float | None = Field(None, gt=0, le=MAX_AMOUNT)
     category: str | None = Field(None, min_length=1)
     date: str | None = None
-    
+
     @field_validator("title")
     @classmethod
     def validate_title(cls, v: str | None) -> str | None:
@@ -51,14 +54,14 @@ class ExpensePartialUpdate(BaseModel):
             if len(v) < MIN_TITLE_LENGTH:
                 raise ValueError("Title cannot be empty or whitespace only")
         return v
-    
+
     @field_validator("amount")
     @classmethod
     def validate_amount(cls, v: float | None) -> float | None:
         if v is not None:
             return round(v, 2)
         return v
-    
+
     @field_validator("date")
     @classmethod
     def validate_date(cls, v: str | None) -> str | None:
@@ -102,7 +105,7 @@ class ImportExpenseItem(BaseModel):
     amount: float = Field(..., gt=0)
     category: str = Field(..., min_length=1)
     date: str
-    
+
     @field_validator("date")
     @classmethod
     def validate_date(cls, v: str) -> str:

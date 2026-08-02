@@ -1,6 +1,8 @@
 import logging
 import sys
+
 from src.core.config import get_settings
+
 
 def setup_logger(name: str = "expense_tracker") -> logging.Logger:
     """Configure and return a structured logger."""
@@ -12,7 +14,7 @@ def setup_logger(name: str = "expense_tracker") -> logging.Logger:
 
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
-    
+
     if not logger.handlers:
         handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter(
@@ -21,7 +23,7 @@ def setup_logger(name: str = "expense_tracker") -> logging.Logger:
         )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
-    
+
     return logger
 
 # Module-level logger for convenience

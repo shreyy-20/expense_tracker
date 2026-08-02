@@ -1,10 +1,11 @@
 """Expense domain model."""
-from datetime import date, datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
+
 
 class Expense:
     """Domain model representing an expense."""
-    
+
     def __init__(
         self,
         title: str,
@@ -20,9 +21,9 @@ class Expense:
         self.amount = round(float(amount), 2)
         self.category = category
         self.date = date
-        self.created_at = created_at or datetime.now(timezone.utc).isoformat()
-        self.updated_at = updated_at or datetime.now(timezone.utc).isoformat()
-    
+        self.created_at = created_at or datetime.now(UTC).isoformat()
+        self.updated_at = updated_at or datetime.now(UTC).isoformat()
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -33,7 +34,7 @@ class Expense:
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
-    
+
     @classmethod
     def from_dict(cls, data: dict) -> "Expense":
         return cls(
@@ -45,7 +46,7 @@ class Expense:
             created_at=data.get("created_at"),
             updated_at=data.get("updated_at"),
         )
-    
+
     def update(self, **kwargs) -> None:
         """Update expense fields. Only updates provided fields."""
         for key, value in kwargs.items():
@@ -55,4 +56,4 @@ class Expense:
                 elif key == "amount":
                     value = round(float(value), 2)
                 setattr(self, key, value)
-        self.updated_at = datetime.now(timezone.utc).isoformat()
+        self.updated_at = datetime.now(UTC).isoformat()

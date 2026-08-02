@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: smart-expense-tracker-backend
+    env: docker
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    region: oregon
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: BACKEND_ENV
+        value: production
+      - key: BACKEND_CORS_ORIGINS
+        value: "*"
+      - key: BACKEND_DATA_DIR
+        value: /app/data
+    disk:
+      name: expense-data
+      mountPath: /app/data
+      sizeGB: 1

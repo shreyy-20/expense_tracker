@@ -35,5 +35,5 @@ USER appuser
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+CMD sh -c "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2"
 

@@ -1,12 +1,14 @@
 """Dependency injection for FastAPI."""
 from functools import lru_cache
+
 from src.core.config import get_settings
-from src.storage.json_file_manager import JsonFileManager
 from src.repositories.expense_repository import ExpenseRepository
 from src.services.expense_service import ExpenseService
 from src.services.stats_service import StatsService
+from src.storage.json_file_manager import JsonFileManager
 
-@lru_cache()
+
+@lru_cache
 def get_file_manager() -> JsonFileManager:
     settings = get_settings()
     fm = JsonFileManager(settings.data_file_path)

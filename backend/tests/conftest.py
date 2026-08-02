@@ -1,11 +1,9 @@
 """Shared test fixtures."""
 import os
-import json
-import tempfile
-import pytest
-from pathlib import Path
-from httpx import AsyncClient, ASGITransport
 from unittest.mock import patch
+
+import pytest
+from httpx import ASGITransport, AsyncClient
 
 # Set test environment BEFORE importing app
 os.environ["BACKEND_ENVIRONMENT"] = "testing"
@@ -23,11 +21,11 @@ def app(temp_data_dir):
     """Create a fresh FastAPI app with isolated test storage."""
     from src.core.config import get_settings
     from src.dependencies import get_file_manager
-    
+
     # Clear LRU caches
     get_settings.cache_clear()
     get_file_manager.cache_clear()
-    
+
     # Patch the data_dir setting
     with patch.dict(os.environ, {"BACKEND_DATA_DIR": str(temp_data_dir)}):
         get_settings.cache_clear()

@@ -1,7 +1,8 @@
 """Statistics API endpoints."""
 from fastapi import APIRouter, Depends
-from src.services.stats_service import StatsService
+
 from src.dependencies import get_stats_service
+from src.services.stats_service import StatsService
 
 router = APIRouter(prefix="/stats", tags=["Statistics"])
 

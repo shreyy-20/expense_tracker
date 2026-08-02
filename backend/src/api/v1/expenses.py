@@ -1,12 +1,16 @@
 """Expense API endpoints."""
 from fastapi import APIRouter, Depends, Query, status
-from fastapi.responses import JSONResponse
-from src.services.expense_service import ExpenseService
-from src.schemas.expense import (
-    ExpenseCreate, ExpenseUpdate, ExpensePartialUpdate,
-    ExpenseQueryParams, BulkDeleteRequest, ImportRequest
-)
+
 from src.dependencies import get_expense_service
+from src.schemas.expense import (
+    BulkDeleteRequest,
+    ExpenseCreate,
+    ExpensePartialUpdate,
+    ExpenseQueryParams,
+    ExpenseUpdate,
+    ImportRequest,
+)
+from src.services.expense_service import ExpenseService
 
 router = APIRouter(prefix="/expenses", tags=["Expenses"])
 
