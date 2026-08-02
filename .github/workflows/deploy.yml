@@ -10,15 +10,9 @@ jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Vercel CLI (latest)
-        run: npm install --global vercel@latest
-      - name: Deploy to Vercel
+      - name: Trigger Vercel Deploy Hook
         run: |
-          vercel deploy --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --yes \
-            ./frontend
+          curl -X POST ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
 
   deploy-backend:
     runs-on: ubuntu-latest
