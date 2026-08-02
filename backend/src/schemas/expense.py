@@ -1,11 +1,8 @@
 """Expense request and response schemas."""
 
 from datetime import date
-
 from pydantic import BaseModel, Field, field_validator
-
-from src.core.constants import MAX_AMOUNT, MAX_TITLE_LENGTH, MIN_TITLE_LENGTH
-
+from src.core.constants import MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_AMOUNT, MAX_AMOUNT
 
 class ExpenseCreate(BaseModel):
     """Schema for creating a new expense."""
@@ -35,8 +32,8 @@ class ExpenseCreate(BaseModel):
     def validate_date(cls, v: str) -> str:
         try:
             date.fromisoformat(v)
-        except ValueError as err:
-            raise ValueError("Date must be in YYYY-MM-DD format") from err
+        except ValueError:
+            raise ValueError("Date must be in YYYY-MM-DD format") from None
         return v
 
 
@@ -76,8 +73,8 @@ class ExpensePartialUpdate(BaseModel):
         if v is not None:
             try:
                 date.fromisoformat(v)
-            except ValueError as err:
-                raise ValueError("Date must be in YYYY-MM-DD format") from err
+            except ValueError:
+                raise ValueError("Date must be in YYYY-MM-DD format") from None
         return v
 
 
@@ -129,8 +126,8 @@ class ImportExpenseItem(BaseModel):
     def validate_date(cls, v: str) -> str:
         try:
             date.fromisoformat(v)
-        except ValueError as err:
-            raise ValueError("Date must be in YYYY-MM-DD format") from err
+        except ValueError:
+            raise ValueError("Date must be in YYYY-MM-DD format") from None
         return v
 
 

@@ -109,17 +109,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build Backend Docker Image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./backend
-          file: ./backend/Dockerfile
-          push: false
-          tags: smart-expense-backend:ci
-      - name: Build Frontend Docker Image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          push: false
-          tags: smart-expense-frontend:ci
+      - name: Build Docker Compose
+        run: docker compose build

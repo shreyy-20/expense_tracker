@@ -1,16 +1,12 @@
 import math
 
-from src.core.constants import ALLOWED_SORT_FIELDS, MAX_CATEGORIES, MAX_TITLE_LENGTH
-from src.core.exceptions import DuplicateError, NotFoundError, ValidationError
 from src.models.expense import Expense
 from src.repositories.expense_repository import ExpenseRepository
+from src.schemas.expense import ExpenseCreate, ExpenseUpdate, ExpensePartialUpdate, ExpenseQueryParams, ExpenseResponse
 from src.schemas.common import PaginationMeta
-from src.schemas.expense import (
-    ExpenseCreate,
-    ExpensePartialUpdate,
-    ExpenseQueryParams,
-    ExpenseUpdate,
-)
+from src.core.exceptions import NotFoundException, ValidationException, DuplicateException
+from src.core.constants import ALLOWED_SORT_FIELDS, MAX_CATEGORIES, MAX_TITLE_LENGTH
+from src.utils.logger import logger
 
 
 class ExpenseService:
@@ -54,22 +50,25 @@ class ExpenseService:
         return page_items, pagination_meta
 
     def get_expense(self, expense_id: str) -> dict:
-        """Get single expense. Raises NotFoundError."""
+        """Get single expense. Raises NotFoundException."""
         expense = self._repo.get_by_id(expense_id)
         if not expense:
-            raise NotFoundError("Expense", expense_id)
+            raise NotFoundException("Expense", expense_id)
         return expense
 
     def create_expense(self, data: ExpenseCreate) -> dict:
         """Create new expense. Validates category exists."""
         categories = self._repo.get_categories()
         if data.category not in categories:
-            raise ValidationError(
+            raise ValidationException(
                 "Invalid category", details=[{"field": "category", "message": "Category not found"}]
             )
 
         expense = Expense(
-            title=data.title, amount=data.amount, category=data.category, date=data.date
+            title=data.title,
+            amount=data.amount,
+            category=data.category,
+            date=data.date,
         )
 
         return self._repo.create(expense)
@@ -78,14 +77,14 @@ class ExpenseService:
         """Full update. All fields required. Validates category."""
         categories = self._repo.get_categories()
         if data.category not in categories:
-            raise ValidationError(
+            raise ValidationException(
                 "Invalid category", details=[{"field": "category", "message": "Category not found"}]
             )
 
         updates = data.model_dump()
         updated = self._repo.update(expense_id, updates)
         if not updated:
-            raise NotFoundError("Expense", expense_id)
+            raise NotFoundException("Expense", expense_id)
         return updated
 
     def partial_update_expense(self, expense_id: str, data: ExpensePartialUpdate) -> dict:
@@ -94,20 +93,20 @@ class ExpenseService:
         if "category" in updates:
             categories = self._repo.get_categories()
             if updates["category"] not in categories:
-                raise ValidationError(
+                raise ValidationException(
                     "Invalid category",
                     details=[{"field": "category", "message": "Category not found"}],
                 )
 
         updated = self._repo.update(expense_id, updates)
         if not updated:
-            raise NotFoundError("Expense", expense_id)
+            raise NotFoundException("Expense", expense_id)
         return updated
 
     def delete_expense(self, expense_id: str) -> None:
-        """Delete expense. Raises NotFoundError."""
+        """Delete expense. Raises NotFoundException."""
         if not self._repo.delete(expense_id):
-            raise NotFoundError("Expense", expense_id)
+            raise NotFoundException("Expense", expense_id)
 
     def bulk_delete_expenses(self, ids: list[str]) -> int:
         """Delete multiple. Return count deleted."""
@@ -137,10 +136,10 @@ class ExpenseService:
                     continue
 
                 expense = Expense(
-                    title=str(title or ""),
-                    amount=float(amount or 0),
-                    category=str(category or ""),
-                    date=str(date or ""),
+                    title=item.get("title"),
+                    amount=item.get("amount"),
+                    category=item.get("category"),
+                    date=item.get("date"),
                 )
                 self._repo.create(expense)
                 imported += 1
@@ -155,22 +154,22 @@ class ExpenseService:
 
     def add_category(self, name: str) -> list[str]:
         if not name or len(name) > MAX_TITLE_LENGTH:
-            raise ValidationError("Invalid category name")
+            raise ValidationException("Invalid category name")
         categories = self._repo.get_categories()
         if name in categories:
-            raise DuplicateError("Category already exists")
+            raise DuplicateException("Category already exists")
         if len(categories) >= MAX_CATEGORIES:
-            raise ValidationError("Maximum categories reached")
+            raise ValidationException("Maximum categories reached")
         return self._repo.add_category(name)
 
     def remove_category(self, name: str) -> list[str]:
         categories = self._repo.get_categories()
         if name not in categories:
-            raise NotFoundError("Category", name)
+            raise NotFoundException("Category", name)
 
         expenses = self._repo.get_filtered(category=name)
         if expenses:
-            raise ValidationError("Cannot remove category in use")
+            raise ValidationException("Cannot remove category in use")
 
         return self._repo.remove_category(name)
 

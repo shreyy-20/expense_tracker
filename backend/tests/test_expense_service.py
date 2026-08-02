@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.core.exceptions import NotFoundError, ValidationError
+from src.core.exceptions import NotFoundException, ValidationException
 from src.repositories.expense_repository import ExpenseRepository
 from src.schemas.expense import ExpenseCreate, ExpenseQueryParams
 from src.services.expense_service import ExpenseService
@@ -33,11 +33,11 @@ class TestExpenseService:
         expense_data = ExpenseCreate(
             title="Test", amount=10.0, category="NonExistent", date="2024-07-15"
         )
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationException):
             service.create_expense(expense_data)
 
     def test_delete_nonexistent(self, service):
-        with pytest.raises(NotFoundError):
+        with pytest.raises(NotFoundException):
             service.delete_expense("nonexistent-id")
 
     def test_list_with_pagination(self, service):
