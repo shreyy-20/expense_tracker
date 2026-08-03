@@ -1,5 +1,6 @@
 """Custom exception classes for the application."""
 
+
 class AppError(Exception):
     """Base application error."""
 
@@ -10,7 +11,7 @@ class AppError(Exception):
         super().__init__(self.message)
 
 
-class NotFoundException(AppError):
+class NotFoundError(AppError):
     def __init__(self, resource: str = "Resource", resource_id: str = ""):
         message = (
             f"{resource} not found"
@@ -20,17 +21,17 @@ class NotFoundException(AppError):
         super().__init__(message=message, status_code=404, error_code="NOT_FOUND")
 
 
-class ValidationException(AppError):
+class ValidationError(AppError):
     def __init__(self, message: str, details: list[dict] | None = None):
         self.details = details or []
         super().__init__(message=message, status_code=422, error_code="VALIDATION_ERROR")
 
 
-class DuplicateException(AppError):
+class DuplicateError(AppError):
     def __init__(self, message: str = "Resource already exists"):
         super().__init__(message=message, status_code=409, error_code="DUPLICATE")
 
 
-class StorageException(AppError):
+class StorageError(AppError):
     def __init__(self, message: str = "Storage operation failed"):
         super().__init__(message=message, status_code=500, error_code="STORAGE_ERROR")

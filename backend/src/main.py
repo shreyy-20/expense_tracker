@@ -2,19 +2,22 @@
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+from src.api.router import api_router
 from src.core.config import get_settings
 from src.core.constants import API_V1_PREFIX
-from src.api.router import api_router
+from src.dependencies import get_file_manager
 from src.middleware.cors import setup_cors
 from src.middleware.error_handler import setup_error_handlers
 from src.middleware.request_id import RequestIDMiddleware
 from src.middleware.security_headers import SecurityHeadersMiddleware
-from src.dependencies import get_file_manager
 from src.utils.logger import logger
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:

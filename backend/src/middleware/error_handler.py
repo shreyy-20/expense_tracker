@@ -37,11 +37,13 @@ def setup_error_handlers(app: FastAPI) -> None:
         details = []
         for error in exc.errors():
             field = ".".join([str(loc) for loc in error.get("loc", [])])
-            details.append({
-                "field": field,
-                "message": error.get("msg"),
-                "type": error.get("type"),
-            })
+            details.append(
+                {
+                    "field": field,
+                    "message": error.get("msg"),
+                    "type": error.get("type"),
+                }
+            )
 
         content = {
             "status": "error",

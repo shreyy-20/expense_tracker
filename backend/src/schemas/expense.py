@@ -1,8 +1,11 @@
 """Expense request and response schemas."""
 
 from datetime import date
+
 from pydantic import BaseModel, Field, field_validator
-from src.core.constants import MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_AMOUNT, MAX_AMOUNT
+
+from src.core.constants import MAX_AMOUNT, MAX_TITLE_LENGTH, MIN_TITLE_LENGTH
+
 
 class ExpenseCreate(BaseModel):
     """Schema for creating a new expense."""
