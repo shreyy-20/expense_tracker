@@ -1,154 +1,153 @@
 # 💰 Smart Expense Tracker
 
-> A production-ready, full-stack expense tracking application with beautiful analytics
+> A production-ready full-stack expense tracker with analytics, Docker support, and CI/CD deployment hooks for Vercel and Render.
 
-![CI Status](https://img.shields.io/github/actions/workflow/status/username/smart-expense-tracker/ci.yml?branch=main)
+![CI Status](https://img.shields.io/github/actions/workflow/status/shreyy-20/expense_tracker/ci.yml?branch=main)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![React](https://img.shields.io/badge/react-18-blue.svg)
 ![TypeScript](https://img.shields.io/badge/typescript-blue.svg)
 ![Docker](https://img.shields.io/badge/docker-blue.svg)
 
-## 📸 Screenshots
-<!-- Screenshots will be added after UI implementation -->
-*(See `assets/screenshots/` for UI designs)*
+## ✨ What the app does
 
-## ✨ Features
+Smart Expense Tracker helps users manage personal or small-business expenses through a polished dashboard and a REST API.
 
-- **✨ Beautiful, responsive dashboard** with real-time statistics
-- **📊 Interactive charts** (monthly trends, category breakdown)
-- **🌍 Multi-currency support** (any ISO 4217 currency)
-- **🌙 Dark/Light mode** with system preference detection
-- **🔍 Full-text search**, filtering, sorting, and pagination
-- **📁 Custom categories** with color coding
-- **📤 Export/Import** expenses as JSON
-- **🐳 Fully containerized** with Docker
-- **✅ Comprehensive test coverage** (80%+)
-- **📖 Auto-generated API documentation** (Swagger + ReDoc)
-- **🚀 CI/CD** with GitHub Actions
-- **🔒 Security**: Input validation, rate limiting, CORS, security headers
+### Current capabilities
+- Dashboard with summary statistics and trend views
+- Expense management with create, update, delete, bulk delete, and search/filter/sort support
+- Category management and user-configurable settings
+- Import/export of expense data in JSON format
+- Multi-currency-friendly UI and theme support
+- Request ID, CORS, and security headers middleware for safer API behavior
+- Docker-based local development and deployment paths
+- GitHub Actions workflows for CI and deployment hooks
 
-## 🛠️ Tech Stack
+## 🛠️ Tech stack
 
 | Layer | Technologies |
 | --- | --- |
-| **Frontend** | React 18, TypeScript, Vite, Tailwind CSS, TanStack Query, Recharts, Lucide React |
-| **Backend** | Python 3.11, FastAPI, Pydantic v2, Uvicorn |
-| **Testing** | pytest, Vitest, React Testing Library |
-| **DevOps** | Docker, GitHub Actions, Vercel, Render |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, TanStack Query, React Router, Recharts |
+| Backend | Python 3.11, FastAPI, Pydantic v2, Uvicorn, SlowAPI |
+| Testing | pytest, Vitest, React Testing Library |
+| DevOps | Docker, Docker Compose, GitHub Actions, Vercel, Render |
 
-## 🚀 Quick Start
+## 🚀 Quick start
 
 ### Prerequisites
 - Node.js 20+
 - Python 3.11+
 - Docker (optional but recommended)
 
-### Option 1: Docker (Recommended)
+### Option 1: Docker (recommended)
 ```bash
-# Clone the repository
-git clone https://github.com/username/smart-expense-tracker.git
-cd smart-expense-tracker
-
-# Start the application
-docker-compose up -d
+git clone https://github.com/shreyy-20/expense_tracker.git
+cd expense_tracker
+cp .env.example .env
+docker compose up --build
 ```
-Visit `http://localhost:3000` to access the application.
 
-### Option 2: Manual Setup
+Open:
+- Frontend: http://localhost:3000
+- Backend API docs: http://localhost:8000/docs
 
-#### Backend Setup
+### Option 2: Manual setup
+
+#### Backend
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-pip install -r requirements.txt
-make seed  # Seed the database with sample data
-uvicorn src.main:app --reload
+# Windows: venv\Scripts\activate
+# macOS/Linux: source venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+python -m scripts.seed
+uvicorn src.main:app --reload --port 8000
 ```
 
-#### Frontend Setup
+#### Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-## 📁 Project Structure
+## 📁 Project structure
 
-```
-smart-expense-tracker/
-├── backend/          # FastAPI application
-│   ├── src/          # Application code (routers, models, services)
-│   ├── tests/        # Pytest test suite
-│   ├── data/         # JSON persistence layer
-│   └── requirements.txt
-├── frontend/         # React SPA
-│   ├── src/          # Components, hooks, context, api
-│   ├── public/       # Static assets
+```text
+expense_tracker/
+├── backend/
+│   ├── src/                # FastAPI app, routers, services, repositories, schemas
+│   ├── tests/              # pytest suite
+│   ├── data/               # JSON persistence files
+│   └── requirements*.txt
+├── frontend/
+│   ├── src/                # React app, pages, hooks, context, API client
 │   └── package.json
-├── docs/             # Detailed documentation
-├── .github/          # CI/CD workflows
-├── docker-compose.yml
+├── docs/                   # Architecture, API, deployment, and contributor docs
+├── .github/workflows/      # CI and deployment workflows
+├── docker-compose.yml      # Full-stack container setup
 └── README.md
 ```
 
-## 📚 API Documentation
+## 📚 API overview
+
+The backend exposes a versioned API under `/api/v1`.
 
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | `/api/v1/expenses` | List all expenses with filtering and pagination |
-| POST | `/api/v1/expenses` | Create a new expense |
-| GET | `/api/v1/expenses/{id}` | Get a specific expense |
-| PUT | `/api/v1/expenses/{id}` | Update an expense |
+| GET | `/api/v1/health` | Health check |
+| GET | `/api/v1/expenses` | List expenses with filtering, sorting, and pagination |
+| POST | `/api/v1/expenses` | Create an expense |
+| GET | `/api/v1/expenses/{id}` | Fetch one expense |
+| PUT | `/api/v1/expenses/{id}` | Replace an expense |
+| PATCH | `/api/v1/expenses/{id}` | Partially update an expense |
 | DELETE | `/api/v1/expenses/{id}` | Delete an expense |
-| GET | `/api/v1/stats/summary` | Get expense summary statistics |
+| DELETE | `/api/v1/expenses` | Bulk delete expenses |
+| POST | `/api/v1/expenses/export` | Export expenses |
+| POST | `/api/v1/expenses/import` | Import expenses |
+| GET | `/api/v1/stats/summary` | Get summary statistics |
 
-- **Swagger UI**: Available at `http://localhost:8000/docs`
-- **ReDoc**: Available at `http://localhost:8000/redoc`
-- **Full Reference**: See [docs/API.md](docs/API.md)
+Swagger and ReDoc are available at:
+- http://localhost:8000/docs
+- http://localhost:8000/redoc
 
-## 🏗️ Architecture
+## 🧪 Testing and quality checks
 
-The application follows a clean 3-layer architecture (Routers, Services, Repositories) ensuring separation of concerns and testability. The data is persisted using a thread-safe JSON file approach, meeting the lightweight requirement without needing a database server.
-
-For a deep dive into the architecture decisions, read [docs/Architecture.md](docs/Architecture.md).
-
-## 🧪 Testing
-
-### Backend Tests
+### Backend
 ```bash
 cd backend
-pytest --cov=src tests/
+pytest
+ruff check src tests
+ruff format --check src tests
 ```
 
-### Frontend Tests
+### Frontend
 ```bash
 cd frontend
+npm run build
 npm run test
-npm run test:coverage
+npx eslint src --ext .ts,.tsx
 ```
-
-We maintain a strict requirement of 80%+ test coverage across the stack.
 
 ## 🚢 Deployment
 
-The application is designed to be easily deployed to modern PaaS providers:
-- **Frontend**: Vercel (via GitHub integration)
-- **Backend**: Render (using Docker environments)
+The repository includes deployment-ready configuration for both hosting providers:
+- Frontend: Vercel via the Vite build output in `frontend/dist`
+- Backend: Render using the Docker-based service definition in `render.yaml`
+
+### GitHub Actions
+The deployment workflow uses deploy hooks for Vercel and Render and performs smoke checks against the deployed URLs. Configure these repository secrets before enabling deployments:
+- `VERCEL_DEPLOY_HOOK_URL`
+- `RENDER_DEPLOY_HOOK_URL`
+- `BACKEND_URL`
+- `FRONTEND_URL`
 
 For full deployment instructions, see [docs/Deployment.md](docs/Deployment.md).
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [docs/Contributing.md](docs/Contributing.md) for guidelines on how to submit pull requests, report issues, and our development standards.
+Contributions are welcome. Please review [docs/Contributing.md](docs/Contributing.md) for workflow guidance and coding standards.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- [FastAPI](https://fastapi.tiangolo.com/) for the blazing fast backend framework.
-- [React](https://reactjs.org/) and [Tailwind CSS](https://tailwindcss.com/) for the fantastic UI tools.
-- [Lucide Icons](https://lucide.dev/) for beautiful SVG icons.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
